@@ -1,2 +1,2 @@
-python -i fallingsand.py test.txt
+python -i fallingsand.py ..\test.txt
 pause
