@@ -1,59 +1,8 @@
-#include <iostream>
-#include <fstream>
-#include <string>
-using namespace std;
+#include <stdio.h>
 
-int digitHexToInt(char c)
-{
-	switch(c)
-	{
-	case 'A':
-		return 10;
-	case 'B':
-		return 11;
-	case 'C':
-		return 12;
-	case 'D':
-		return 13;
-	case 'E':
-		return 14;
-	case 'F':
-		return 15;
-	default:
-		return c - '0';
-		break;
-	}
-}
-
-int hexToInt(char hexString[])
-{
-	int returnValue = 0;
-	for( int i = 0; hexString[i] != '\0'; i++)
-		returnValue = 16*returnValue + digitHexToInt(hexString[i]);
-
-	return returnValue;
-}
-
-void fillHexValues(int hexValues[],const char* hexString)
-{
-	int nextHexIndex = 0;
-	for( int i = 0; ; i++)
-	{
-		if(hexString[i] == ' ' || hexString[i] == '\0')
-		{
-			char hexValueString[3];
-			hexValueString[0] = hexString[i-2];
-			hexValueString[1] = hexString[i-1];
-			hexValueString[2] = '\0';
-			hexValues[nextHexIndex] = hexToInt(hexValueString);
-			nextHexIndex++;
-
-			if(hexString[i] == '\0')
-				return;
-		}
-	}
-}
-
+// Credit to the idea of implementing this function this way goes to reddit
+// user "skeeto":
+// http://www.reddit.com/r/dailyprogrammer/comments/2ao99p/7142014_challenge_171_easy_hex_to_8x8_bitmap/cixadsp
 int main(int argc,char* argv [])
 {
 	if( argc != 2)
@@ -61,38 +10,18 @@ int main(int argc,char* argv [])
 		printf("Usage: hextobit.exe [filename]\n");
 		return 0;
 	}
+	int value;
+	FILE* pInputFile = fopen(argv[1],"r");
+	FILE* pOutputFile = fopen("output.txt","w");
 
-	ifstream myInput;
-	ofstream myOutput;
-	int hexValues[8];
-	bool bitmap[8][8];
-
-	myInput.open(argv[1]);
-	myOutput.open("output.txt");
-
-	string line;
-	getline(myInput,line);
-	fillHexValues(hexValues,line.c_str());
-	
-	for(int i = 0; i < 8; i++)
-		for (int j = 0; j < 8; j++)
-			bitmap[i][j] = hexValues[i] & (1 << 7 - j) ;
-
-	// Print out our bitmap:
-	for(int i = 0; i < 8; i++)
+	while(!feof(pInputFile))
 	{
-		if( i != 0 )
-			myOutput << endl;
-		for (int j = 0; j < 8; j++)
-		{
-			if(bitmap[i][j])
-				myOutput << "x";
-			else
-				myOutput << " ";
-		}
+		fscanf(pInputFile,"%2x",&value);
+		for(int i = 0 ; i < 8; i++)
+			fputc(value & 0x80 >> i ? 'x' : ' ',pOutputFile);
+		fputc('\n',pOutputFile);
 	}
 
-	myInput.close();
-	myOutput.close();
-	return 0;
+	fclose(pInputFile);
+	fclose(pOutputFile);
 }
