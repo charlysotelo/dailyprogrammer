@@ -21,12 +21,16 @@ for line in f:
 	sandGrid.append(list(line))
 dimensions = [len(sandGrid),len(sandGrid[0])] #height,width
 
-for row in range(dimensions[0]-1,-1,-1):
-	for col in range(0,dimensions[1]):
-		rate = fallRate(sandGrid[row][col])
-		if( rate > 0 and row + rate < dimensions[0] and sandGrid[row+rate][col] == ' '): #physics object
-			sandGrid[row+rate][col] = sandGrid[row][col]
-			sandGrid[row][col] = ' '
+ChangeOccured = True
+while(ChangeOccured):
+	ChangeOccured = False
+	for row in range(dimensions[0]-1,-1,-1):
+		for col in range(0,dimensions[1]):
+			rate = fallRate(sandGrid[row][col])
+			if( rate > 0 and row + rate < dimensions[0] and sandGrid[row+rate][col] == ' '): #physics object
+				sandGrid[row+rate][col] = sandGrid[row][col]
+				sandGrid[row][col] = ' '
+				ChangeOccured = True
 
 firstLine = True
 for row in sandGrid:
